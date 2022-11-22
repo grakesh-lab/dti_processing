@@ -5,7 +5,7 @@
 # NOTE: Depends upon package "coreutils" for command "realpath"
 #   $ brew install coreutils
 
-readonly VERSION="0.1.2"
+readonly VERSION="0.2.0"
 readonly PROGRAM="$(basename $0)"
 readonly AUTHORS="Pavan A. Anand"
 readonly COPYRIGHT_YEARS="2022"
@@ -19,6 +19,7 @@ This script carries out the following steps for preprocessing DWI data:
     1. Eddy current correction
     2. Brain extraction (a.k.a. \"skull stripping\")
     3. Fitting tensors to each voxel
+    4. Tract-based spatial statistics
 
 IMPORTANT: Ensure that your data are structured in a BIDS-conformant manner.
            This script assumes that they are and might break if not."
@@ -276,3 +277,18 @@ case ${mode} in
         analyze_project ${data_dir}
         ;;
 esac
+
+# TODO: rewrite following code to be modular & parallel-izable
+# TODO: split code off into separate script if needed to do so
+readonly TBSS_DIR="${OUTPUT_PARENT}/analysis"
+create_dir "${TBSS_DIR}" ${FALSE}
+# TODO: make use of select_file for the following
+# TODO: modify select_file to be compatible with above requirement
+for file in $(find "${OUTPUT_PARENT}" -name "*_FA.nii.gz"); do
+    cp "${file}" "${TBSS_DIR}"
+done
+cd ${TBSS_DIR}
+tbss_1_preproc *.nii.gz
+tbss_2_reg -T
+tbss_3_postreg -S
+tbss_4_prestats 0.2

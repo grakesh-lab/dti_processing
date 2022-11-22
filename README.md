@@ -48,18 +48,6 @@ Positional parameters:
 
 ## CHANGELOG
 
-### version 0.1.0
-
-* Initial commit
-
-### version 0.1.1
-
-* fix: clarified "OUTPUT_PARENT" case messages
-
-### version 0.1.2
-
-* fix: corrected -b & -p flags' "bids_parent" path
-
-### versioin 0.2.0
+### version 0.2.0
 
 * feat: integrated TBSS pipeline MVP

@@ -5,7 +5,7 @@
 # NOTE: Depends upon package "coreutils" for command "realpath"
 #   $ brew install coreutils
 
-readonly VERSION="0.1.1"
+readonly VERSION="0.1.2"
 readonly PROGRAM="$(basename $0)"
 readonly AUTHORS="Pavan A. Anand"
 readonly COPYRIGHT_YEARS="2022"
@@ -235,12 +235,12 @@ while getopts ${opts} option; do
         b)
             mode="subject"
             data_dir="${OPTARG}"
-            bids_parent=$(realpath ${working_dir}/../..)
+            bids_parent=$(realpath ${data_dir}/../..)
             ;;
         p)
             mode="project"
             data_dir="${OPTARG}"
-            bids_parent=$(realpath ${working_dir}/..)
+            bids_parent=$(realpath ${data_dir}/..)
             ;;
         \?)
             print_help

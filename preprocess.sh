@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-
-# Depends upon package `coreutils` for command `realpath`
-# $ brew install coreutils
+#
+# Perform diffusion-weighted imaging preprocessing pipeline
+#
+# NOTE: Depends upon package "coreutils" for command "realpath"
+#   $ brew install coreutils
 
 readonly VERSION="0.1.0"
 readonly PROGRAM="$(basename $0)"
@@ -25,15 +27,15 @@ IMPORTANT: Ensure that your data are structured in a BIDS-conformant manner.
 print_help() {
     echo "
 Usage:
-    $ ${PROGRAM} [-h] [-s SESSION] [-b SUBJECT] [-p PROJECT] OUTPUT
+    $ ${PROGRAM} [ -h | -c | -w | -s SESSION | -b SUBJECT | -p PROJECT ] OUTPUT
 
 Options:
     h    Print this help message and exit
+    c    Print copyright & acknowledgement information
+    w    Print warranty information
     s    Analyze files within a single session
     b    Analyze all runs for a single subject
     p    Analyze all runs of several subjects
-    c    Print copyright & acknowledgement information
-    w    Print warranty information
 
 Positional arguments:
     OUTPUT  Directory under which \"derivatives\" directory will be created
@@ -61,7 +63,7 @@ It should be distributed with this script under the name \"LICENSE\". If not,
 please see <https://www.gnu.org/licenses/>.
 
 To see a copyright notice, please execute:
-    $ $(basename $0) -c"
+    $ ${PROGRAM} -c"
 }
 
 exit_error() {

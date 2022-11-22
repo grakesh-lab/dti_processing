@@ -2,7 +2,7 @@
 
 ## Background
 
-This script was created by Pavan Anand, M.D. as a member of the Rakesh Lab at the University of Kentucky Psychiatry Department in 2022.
+This script was created by Pavan Anand, M.D. as a member of the University of Kentucky Lab for Addiction Neuromodulation in 2022.
 
 ## Purpose
 

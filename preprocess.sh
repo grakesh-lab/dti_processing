@@ -5,7 +5,7 @@
 # NOTE: Depends upon package "coreutils" for command "realpath"
 #   $ brew install coreutils
 
-readonly VERSION="0.1.0"
+readonly VERSION="0.1.1"
 readonly PROGRAM="$(basename $0)"
 readonly AUTHORS="Pavan A. Anand"
 readonly COPYRIGHT_YEARS="2022"
@@ -252,11 +252,9 @@ done
 shift $((${OPTIND} - 1))
 
 if [ -z "$1" ] && [ -z "${OUTPUT_PARENT}" ]; then
-    echo "DEBUG: \"OUTPUT_PARENT\" not specified; setting now..."
     exit_error "\"OUTPUT\" not specified"
-    print_help
 elif [ -z "$1" ] && [ ! -z "${OUTPUT_PARENT}" ]; then
-    echo "DEBUG: \"OUTPUT_PARENT\" is already specified as ${OUTPUT_PARENT}"
+    echo "DEBUG: \"OUTPUT_PARENT\" already specified (\"${OUTPUT_PARENT}\")"
 else
     echo "DEBUG: \"OUTPUT_PARENT\" specified as \"$1\""
     OUTPUT_PARENT="${bids_parent}/derivatives/$1"

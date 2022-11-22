@@ -41,7 +41,7 @@ Options:
 
 Positional parameters:
 
-* `OUTPUT`: A name for the directory in which the temporary & permanent output data will be stored. Temporary data are deleted at the script's end. The script automatically locates the project root directory for any session, subject, or project directory passed as input data to the project. It also creates a `derivatives` directory outside the project root (within the project root's parent directory) if it doesn't exist. If `OUTPUT` does not exist within `derivatives`, it creates the directory; if it does, it uses that directory. If no name is provided for `OUTPUT`, the script generates a timestamped directory corresponding to the time & date the analyses it contains were started.
+* `OUTPUT`: A name for the directory in which the temporary & permanent output data will be stored. Temporary data are deleted at the script's end. The script automatically locates the project root directory for any session, subject, or project directory passed as input data to the project. It also creates a `derivatives` directory outside the project root (within the project root's parent directory) if it doesn't exist. If `OUTPUT` does not exist within `derivatives`, it creates the directory; if it does, it uses that directory.
 
 **CAUTION**: in cases in which `derivatives` exists and there is already a subdirectory of the same name passed to `OUTPUT`, the program *may* overwrite data within that subdirectory should there be a conflict of subdirectory names within `derivatives/OUTPUT`
 

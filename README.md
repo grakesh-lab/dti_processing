@@ -11,6 +11,7 @@ The script combine several preprocessing steps for diffusion weighted imaging da
 1. Eddy current correction
 2. Brain extraction (a.k.a. "skull stripping")
 3. Fitting tensors to each voxel
+4. Tract-based spatial statistics
 
 ## Usage
 
@@ -47,16 +48,18 @@ Positional parameters:
 
 ## CHANGELOG
 
-### v 0.1.0
-
-`README.md`
+### version 0.1.0
 
 * Initial commit
 
-`preprocess.sh`
+### version 0.1.1
 
-* Initial commit
+* fix: clarified "OUTPUT_PARENT" case messages
 
-`LICENSE`
+### version 0.1.2
 
-* Initial commit
+* fix: corrected -b & -p flags' "bids_parent" path
+
+### versioin 0.2.0
+
+* feat: integrated TBSS pipeline MVP

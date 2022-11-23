@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# Perform diffusion-weighted imaging preprocessing pipeline
+# Perform diffusion-weighted imaging preprocessing pipeline.
 #
-# NOTE: Depends upon package "coreutils" for command "realpath"
+# Depends upon package "coreutils" for command "realpath":
 #   $ brew install coreutils
 
 readonly VERSION="0.2.0"
@@ -10,8 +10,8 @@ readonly PROGRAM="$(basename $0)"
 readonly AUTHORS="Pavan A. Anand"
 readonly COPYRIGHT_YEARS="2022"
 
-readonly TRUE=1 YES=1 NO=0 FALSE=0
-readonly START_TIME="$(date +"%Y-%m-%d_%H.%M.%S")"
+readonly TRUE=1 YES=1 NO=0 FALSE=0  # TODO: delete YES/NO aliases for clarity
+readonly START_TIME="$(date +"%Y-%m-%d_%H.%M.%S")"  # TODO: delete this (unused)
 
 print_purpose() {
     echo "
@@ -68,11 +68,28 @@ To see a copyright notice, please execute:
 }
 
 exit_error() {
-    echo "Error: $1"
-    exit 1
+    #######################################
+    # Exit program after printing custom error message
+    # Arguments:
+    #    $1: Custom error message, a string
+    # Outputs:
+    #    Writes error message to STDOUT
+    #######################################
+    echo "Error: $1"  # TODO: consider printing to STDERR (+/- STDOUT)
+    exit 1  # TODO: allow use of different exit codes
 }
 
+# TODO: add verbosity toggle function
+
 create_dir(){
+    #######################################
+    # Create a directory; optionally, exit if it already exists
+    # Arguments:
+    #     $1: Name of directory to be created, a string
+    #     $2: Whether to exit if "$1" already exists, an integer
+    # Outputs:
+    #     Prints debug message if directory does not exist
+    #######################################
     if [ ! -d "${1}" ]; then
         echo "DEBUG: \"${1}\" does not exist; creating now..."
         mkdir -p $1
@@ -86,45 +103,63 @@ create_dir(){
 }
 
 identify_file(){
+    #######################################
+    # Save path of a file to a global variable
+    # Globals:
+    #     selected_file: modified
+    # Arguments:
+    #     $1: Top-level directory for file search execution
+    #     $2: File name pattern to match, a string
+    # Outputs:
+    #     Prints information about pattern match status to STDOUT
+    #######################################
     local -r scope="$1"
     local -r pattern="$2"
     IFS=$'\n'; local matches=$(find ${scope} -name ${pattern}); unset IFS
     local -r match_count="${#matches[@]}"
     if [ ${match_count} -gt 1 ]; then
-        echo "More than 1 file matches pattern \"${pattern}\""
+        # TODO: pass this message as an error, then handle the error
+        echo "DEBUG: more than 1 file matches pattern \"${pattern}\"."
     elif [ ${match_count} -eq 1 ]; then
-        echo "DEBUG: file matched is ${matches[0]}"
-        selected_file="${matches[0]}"
+        echo "DEBUG: file matched is ${matches[0]}."
+        selected_file="${matches[0]}"  # TODO: use JSON to pass value (e.g., "jq")
     else
         exit_error "no files matched pattern \"${pattern}\""
-        echo "No files matched the search pattern."
     fi
 }
 
 eddy_correction(){
-    # Eddy current correction
-    #
-    # Usage:
-    #   $ eddy_correct <input (.nii)> <output (.nii.gz & .ecclog)> [options]
-    #
-    # Outputs several tmp files, then combined to eddy_corrected.nii.gz
-    # and logged to eddy_corrected.ecclog
-    #
-    # Reference: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/eddy/UsersGuide
-
+    #######################################
+    # Perform eddy current correction
+    # Globals:
+    #     selected_file: used
+    #     working_dir:   used
+    #     eddy_output:   modified
+    # Arguments:
+    #     $1: Input, an .nii file
+    #     $2: Output file prefix, a string
+    # Outputs:
+    #     Prints script status update to STDOUT
+    #######################################
     echo "Correcting for eddy currents within ${selected_file}..."
-    # NOTE: does *not* like spaces in input/output file path!
+    # NOTE: does *not* like spaces anywhere in file path arguments!
     eddy_output="${working_dir}/${2}_eddy_corrected"
     eddy_correct $1 ${eddy_output} 0
 }
 
 brain_extraction(){
-    # Skull strip the DTI
-    #
-    # Reference: https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/BET/UserGuide
-    #
-    # Outputs brain.nii.gz & brain_mask.nii.gz in $RESULTS
-
+    #######################################
+    # Skull strip the input image
+    # Globals:
+    #     working_dir:   used
+    #     file_basename: used
+    #     bet_output:    modified
+    # Arguments:
+    #     $1: Input, an .nii file
+    #     $2: Output file prefix, a string
+    # Outputs:
+    #     Prints script status update to STDOUT
+    #######################################
     echo "Extracting binary brain mask..."
     # TODO: investigate feasibility of using `bet2` instead
     bet_output="${working_dir}/${2}_${file_basename}"
@@ -132,6 +167,19 @@ brain_extraction(){
 }
 
 analyze_session() {
+    #######################################
+    # Conduct analysis of an individual session's data
+    # Globals:
+    #     selected_file: used
+    #     prefix:        used
+    #     eddy_output    used
+    #     bet_output     used
+    #     OUTPUT_PARENT  used
+    # Arguments:
+    #     $1: Directory containing at only one "dwi" subdirectory
+    # Outputs:
+    #     Prints script status update to STDOUT
+    #######################################
     local -r session=$1
 
     if [ -d ${session} ]; then
@@ -184,20 +232,25 @@ point the script to an existing BIDS-compliant directory."
 
     # Run dtifit
     echo "Fitting diffusion tensor model at each voxel..."
-    local -r BVAL="$(find ${session} -name "*.bval")"
-    local -r BVEC="$(find ${session} -name "*.bvec")"
+    local -r bval="$(find ${session} -name "*.bval")"
+    local -r bvec="$(find ${session} -name "*.bvec")"
     dtifit \
         -k "${eddy_output}" \
         -m "${bet_output}_mask-nodif.nii.gz" \
         -o "${session_outputs}/${prefix}" \
-        -r "${BVEC}" \
-        -b "${BVAL}"
+        -r "${bvec}" \
+        -b "${bval}"
 
     # Remove "${session_outputs}/tmp" directory
     rm -rf "${working_dir}"
 }
 
 analyze_subject() {
+    #######################################
+    # Conduct analysis on all sessions for a subject
+    # Arguments:
+    #   $1: Directory containing at least one session subdirectory
+    #######################################
     subject=$1
     local session
     for session in $(ls -d ${subject}/*); do
@@ -206,6 +259,11 @@ analyze_subject() {
 }
 
 analyze_project() {
+    #######################################
+    # Conduct analysis on all subjects for a project
+    # Arguments:
+    #   $1: Directory containing at least one subject subdirectory
+    #######################################
     project=$1
     local subject
     for subject in $(ls -d ${project}/*); do
@@ -213,21 +271,13 @@ analyze_project() {
     done
 }
 
-# TODO: add "-m" flag to encapsulate mode behavior & simplify interface
+# TODO: add "m" flag to encapsulate mode behavior & simplify interface
 opts="hcws:b:p:"
 while getopts ${opts} option; do
     case ${option} in
-        h)
-            print_purpose
-            print_help
-            exit
-            ;;
-        c)
-            print_copyright
-            ;;
-        w)
-            print_warranty
-            ;;
+        h) print_purpose && print_help && exit ;;
+        c) print_copyright ;;
+        w) print_warranty ;;
         s) 
             mode="session"
             data_dir="${OPTARG}"
@@ -243,10 +293,7 @@ while getopts ${opts} option; do
             data_dir="${OPTARG}"
             bids_parent=$(realpath ${data_dir}/..)
             ;;
-        \?)
-            print_help
-            exit
-            ;;
+        \?) print_help && exit ;;
     esac
 done
 
@@ -261,6 +308,7 @@ else
     OUTPUT_PARENT="${bids_parent}/derivatives/$1"
     export OUTPUT_PARENT="${bids_parent}/derivatives/$1"
 fi
+
 create_dir ${OUTPUT_PARENT} ${FALSE}
 
 case ${mode} in

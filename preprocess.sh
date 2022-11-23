@@ -10,8 +10,9 @@ readonly PROGRAM="$(basename $0)"
 readonly AUTHORS="Pavan A. Anand"
 readonly COPYRIGHT_YEARS="2022"
 
-readonly TRUE=1 YES=1 NO=0 FALSE=0  # TODO: delete YES/NO aliases for clarity
-readonly START_TIME="$(date +"%Y-%m-%d_%H.%M.%S")"  # TODO: delete this (unused)
+# Adding boolean logic aliases
+readonly TRUE=1
+readonly FALSE=0
 
 print_purpose() {
   echo "
@@ -142,7 +143,7 @@ eddy_correction(){
   #   Prints script status update to STDOUT
   #######################################
   echo "Correcting for eddy currents within ${selected_file}..."
-  # NOTE: does *not* like spaces anywhere in file path arguments!
+  # WARN: does *not* like spaces anywhere in file path arguments!
   eddy_output="${working_dir}/${2}_eddy_corrected"
   eddy_correct $1 ${eddy_output} 0
 }

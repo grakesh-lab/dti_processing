@@ -6,7 +6,7 @@
 #   $ brew install coreutils
 # TODO: add check for coreutils program & error if unfound
 
-readonly VERSION="0.3.0"
+readonly VERSION="0.3.1"
 readonly PROGRAM="$(basename $0)"
 readonly AUTHORS="Pavan A. Anand"
 readonly COPYRIGHT_YEARS="2022"
@@ -351,7 +351,7 @@ create_dir "${ANALYSIS}" ${FALSE}
 # TODO: make use of select_file for the following
 # TODO: modify select_file to be compatible with above requirement
 for file in $(find "${DERIVATIVES}" -name "*_FA.nii.gz"); do
-  cp "${file}" "${ANALYSIS}"
+  cp "${file}" "${ANALYSIS}/${$(basename ${file})//_FA/}"
 done
 cd ${ANALYSIS}
 tbss_1_preproc *.nii.gz

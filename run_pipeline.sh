@@ -6,10 +6,17 @@
 # TODO: add check for coreutils/realpath, dc, & parallel programs
 # TODO: add OS & program version checks to ensure thaat script will run
 
+# Global variables
 readonly PROGRAM=$(basename $0)
 readonly PROJECT_ROOT=$(dirname $0)
-export PROJECT_ROOT
+readonly ENIGMA_ROOT="/home/pavan/share/enigma"
+readonly CORES=6
 
+# Exported globals
+export PROJECT_ROOT
+export ENIGMA_ROOT
+
+# Importing libraries
 source "${PROJECT_ROOT}/lib/helpers.sh"
 
 N=0  # Counter variable
@@ -65,6 +72,7 @@ Altogether, this example's outputs would be stored under:
 
 exit 1
 }
+
 opts="hcw"  # TODO: add -v/--verbose option
 while getopts ${opts} option; do
   case ${option} in
@@ -105,7 +113,7 @@ readonly DERIVATIVES="${bids_root}/derivatives/${OUTPUT}"
 #create_dir ${DERIVATIVES} ${FALSE}  # Would be nice to have create_dir...
 mkdir -p ${DERIVATIVES}
 find ${INPUT} -type d -name "ses-*" \
-  | parallel -j 4 "${PROJECT_ROOT}/utils/preprocess.sh" {} ${DERIVATIVES}
+  | parallel -j ${CORES} "${PROJECT_ROOT}/utils/preprocess.sh" {} ${DERIVATIVES}
 # TODO: add option to specify how many cores to use
 
 # TODO: add option to disable TBSS
@@ -120,8 +128,17 @@ for file in $(find "${DERIVATIVES}" -name "*_FA.nii.gz"); do
   cp "${file}" "${ANALYSIS}/$(echo $(basename ${file}) | sed -r 's/_FA//g')"
 done
 
-cd ${ANALYSIS}
-readonly ENIGMA="${bids_root}/enigma"
-tbss_1_preproc *.nii.gz  # Produces FA mask
-tbss_2_reg -t ${ENIGMA}/ENIGMA_DTI_FA.nii.gz  # Registered to ENIGMA target
-tbss_3_postreg -S  # Produces mean/all FA, mean FA mask, & mean FA skeleton
+# TODO: add more "DEBUG" outputs & documenting comments
+${PROJECT_ROOT}/utils/tbss.sh ${ANALYSIS}
+
+matches=$(find ${ANALYSIS}/FA -maxdepth 1 -mindepth 1 -type f -name "*.nii.gz")
+names=$(for result in ${matches}; do echo "$(basename ${result})" | sed -r "s/_FA.*//g"; done \
+  | sort \
+  | uniq \
+  | grep "sub-.*")
+for label in ${names}; do
+  mkdir -p "${ANALYSIS}/individual/${label}/"{stats,FA}
+done
+
+find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
+  | parallel -j ${CORES} "${PROJECT_ROOT}/utils/skeletonize.sh" {} ${ANALYSIS}

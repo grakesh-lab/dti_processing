@@ -9,7 +9,7 @@ readonly FALSE=0
 readonly PROGRAM="$(basename $0)"
 
 if [ ! -z PROJECT_ROOT ]; then  # $PROJECT_ROOT set in run_pipeline.sh
-  source "${PROJECT_ROOT}/helpers.sh"
+  source "${PROJECT_ROOT}/lib/helpers.sh"
 else
   # TODO: handle calling script independent of run_pipeline.sh
   echo "ERROR: \"PROJECT_ROOT\" not set"
@@ -265,7 +265,7 @@ shift $((${OPTIND} - 1))  # TODO: test what happens if no opts given
 
 # Aliases for positional arguments
 readonly INPUT=$(realpath $1)
-readonly OUTPUT=$2
+readonly OUTPUT=$2  # TODO: ensure that string only—not a path—is provided
 
 # TODO: create main() & call that here instead
 analyze_session ${INPUT} ${OUTPUT}

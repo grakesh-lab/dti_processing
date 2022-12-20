@@ -30,8 +30,9 @@ ${session}/FA/${id}_masked_FA.nii.gz \
 ${session}/stats/${id}_masked_FA_skel.nii.gz \
 -s ${ENIGMA_ROOT}/ENIGMA_DTI_FA_mask.nii.gz
 
+# TODO: split script from here into "roi_analysis.sh" file
 ${ENIGMA_ROOT}/single_subject_roi ${ENIGMA_ROOT}/JHU_roi_look_up_table.txt \
-${analysis_root}/stats/mean_FA_skeleton.nii.gz \
+${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton.nii.gz \
 ${ENIGMA_ROOT}/JHU_atlas.nii.gz \
 ${session}/stats/${id}_roi \
 ${session}/stats/${id}_masked_FA_skel.nii.gz

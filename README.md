@@ -41,8 +41,9 @@ This script was created by Pavan Anand, M.D. as a member of the University of Ke
 
 ## CHANGELOG
 
-### version 0.5.0
+### version 0.5.1
 
-* feat!: add skeletonization, modularize script
-  * BREAKING CHANGE: split off TBSS & skeletonization steps into discrete files (`tbss.sh` & `skeletonize.sh`, respectively)
-  * Discrete skeletonization script facilitated implementation of parallelization
+* refactor: use ENIGMA mean skeleton in ROI analysis
+  * Previously, the mean skeleton generated from the dtifit command was being used in the ROI analysis step (i.e., as input to the single_subject_roi executable).
+  * However, ENIGMA provide a mean skeleton of their own against which we may analyze our generated skeletons. The change in this commit uses this standardized ENIGMA skeleton vs. our subjects' mean skeleton.
+  * NOTE: it is advisable to rerun at least the ROI analysis portion of any prior analyses conducted with the prior versions of the script as this may generate different ROI statistics.

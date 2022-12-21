@@ -142,3 +142,6 @@ done
 
 find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
   | parallel -j ${CORES} "${PROJECT_ROOT}/utils/skeletonize.sh" {} ${ANALYSIS}
+
+find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
+  | parallel -j ${CORES} "${PROJECT_ROOT}/utils/analyze_roi.sh" {} ${ANALYSIS}

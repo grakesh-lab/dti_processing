@@ -18,25 +18,14 @@ id="$(basename ${session})"
 cp ${analysis_root}/FA/${id}_*.nii.gz ${session}/FA
 
 fslmaths ${session}/FA/${id}_FA_to_target.nii.gz \
--mas ${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton_mask.nii.gz \
-${session}/FA/${id}_masked_FA.nii.gz
+  -mas ${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton_mask.nii.gz \
+  ${session}/FA/${id}_masked_FA.nii.gz
 
 tbss_skeleton \
--i ${session}/FA/${id}_masked_FA.nii.gz \
--p 0.049 \
-${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton_mask_dst.nii.gz \
-${FSLDIR}/data/standard/LowerCingulum_1mm.nii.gz \
-${session}/FA/${id}_masked_FA.nii.gz \
-${session}/stats/${id}_masked_FA_skel.nii.gz \
--s ${ENIGMA_ROOT}/ENIGMA_DTI_FA_mask.nii.gz
-
-# TODO: split script from here into "roi_analysis.sh" file
-${ENIGMA_ROOT}/single_subject_roi ${ENIGMA_ROOT}/JHU_roi_look_up_table.txt \
-${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton.nii.gz \
-${ENIGMA_ROOT}/JHU_atlas.nii.gz \
-${session}/stats/${id}_roi \
-${session}/stats/${id}_masked_FA_skel.nii.gz
-
-${ENIGMA_ROOT}/average_subject_tracts \
-${session}/stats/${id}_roi.csv \
-${session}/stats/${id}_roi_avg.csv
+  -i ${session}/FA/${id}_masked_FA.nii.gz \
+  -p 0.049 \
+  ${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton_mask_dst.nii.gz \
+  ${FSLDIR}/data/standard/LowerCingulum_1mm.nii.gz \
+  ${session}/FA/${id}_masked_FA.nii.gz \
+  ${session}/stats/${id}_masked_FA_skel.nii.gz \
+  -s ${ENIGMA_ROOT}/ENIGMA_DTI_FA_mask.nii.gz

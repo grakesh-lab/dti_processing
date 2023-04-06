@@ -145,3 +145,51 @@ find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
 
 find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
   | parallel -j ${CORES} "${PROJECT_ROOT}/utils/analyze_roi.sh" {} ${ANALYSIS}
+
+echo "DEBUG: starting diffusion analyses."
+# MD/AD/RD analyses
+for individual in $(find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d); do
+  mkdir -p ${individual}/{MD,AD,RD}/{origdata,stats,intermediary}
+  readonly MD_ROOT=${individual}/MD
+  readonly AD_ROOT=${individual}/AD
+  readonly RD_ROOT=${individual}/RD
+  for file in $(find ${DERIVATIVES}/$(basename ${individual}) -mindepth 1 -type f -name "*_MD.nii.gz"); do
+    cp ${file} ${MD_ROOT}/origdata/"$(basename ${file})"
+  done
+  for file in $(find ${DERIVATIVES}/$(basename ${individual}) -mindepth 1 -type f -name "*_L1.nii.gz"); do
+    cp ${file} ${AD_ROOT}/origdata/"$(basename ${file} | sed 's/_L1/_AD/g')"
+  done
+  for study in $(find ${DERIVATIVES}/$(basename ${individual}) -mindepth 1 -type d -regex ".*/derivatives/.*/sub-.*"); do
+    fslmaths ${study}/*_L2.nii.gz -add ${study}/*_L3.nii.gz -div 2 ${RD_ROOT}/origdata/$(basename ${study})_RD.nii.gz
+  done
+  for diff_root in MD_ROOT AD_ROOT RD_ROOT; do
+    for file in $(find ${diff_root}/origdata -type f -name "*_$(basename ${diff_root}).nii.gz"); do
+      fslmaths ${file} \
+        -mas "${individual}/FA/$(basename ${individual})_FA_mask.nii.gz" \
+        "${diff_root}/intermediary/$(basename ${file})"
+    done
+    for file in $(find ${individual}/intermediary -type f -name "*_$(basename ${diff_root}).nii.gz"); do
+      applywarp \
+        -i ${file} \
+        -o ${diff_root}/intermediary/$(basename ${file})_to_target.nii.gz \
+        -r ${FSLDIR}/data/standard/FMRIB58_FA_1mm \
+        -w ${individual}/FA/$(basename ${individual})_FA_to_target_warp.nii.gz
+    done
+    for file in $(find ${individual}/intermediary -type f -name "*_to_target.nii.gz"); do
+      fslmaths ${file} \
+        -mas "${ENIGMA_ROOT}/ENIGMA_DTI_FA_mask.nii.gz" \
+        "${diff_root}/intermediary/$(basename ${individual})_masked_$(basename ${diff_root}).nii.gz"
+    done
+    for file in $(find ${diff_root}/intermediary -type f -name "*_masked_*.nii.gz"); do
+      tbss_skeleton \
+        -i ${ENIGMA_ROOT}/ENIGMA_DTI_FA.nii.gz \
+        -p 0.049 \
+        ${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton_mask_dst.nii.gz \
+        ${FSLDIR}/data/standard/LowerCingulum_1mm.nii.gz \
+        ${individual}/FA/$(basename ${individual})_masked_FA.nii.gz \
+        ${diff_root}/stats/$(basename ${individual})_masked_$(basename ${diff_root})_skel.nii.gz \
+        -a ${diff_root}/intermediary/$(basename ${individual})_masked_$(basename ${diff_root}).nii.gz \
+        -s ${ENIGMA_ROOT}/ENIGMA_DTI_FA_mask.nii.gz
+    done
+  done
+done

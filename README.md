@@ -1,5 +1,9 @@
 # DTI Processing Pipeline
 
+## Status
+
+This script has been finished enough to run [the ENIGMA DTI protocols](https://enigma.ini.usc.edu/protocols/dti-protocols/) (with minor modifications as per our lab's data and needs) until the analysis of MD, AD, and RD values. The derivation and analyses of those data were performed via one-off Bash commands and work is being done on a feature branch to implement those commands into the script to execute the entire pipeline in an automated manner. That code will be merged with this main branch when it is ready, but until then, the main branch's code should suffice for taking data through a majority of the ENIGMA DTI protocol pipeline, while the rest of the steps can be performed according to the materials presented by the ENIGMA Consortium on their website (see earlier link).
+
 ## Purpose
 
 The script combines several preprocessing steps for diffusion weighted imaging data for use in tractography. The pipeline's steps are as follows:
@@ -37,7 +41,7 @@ Positional parameters:
 
 ## Acknowledgements
 
-This script was created by Pavan Anand, M.D. as a member of the University of Kentucky Lab for Addiction Neuromodulation in 2022.
+This script was created by Pavan Anand, M.D. as a member of the University of Kentucky Lab for Addiction Neuromodulation in 2022-23 and is based on [the work of the ENIGMA Consortium](https://enigma.ini.usc.edu/about-2/).
 
 ## CHANGELOG
 

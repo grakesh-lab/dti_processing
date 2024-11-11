@@ -3,25 +3,26 @@
 # Collection of helper functions
 
 readonly TITLE="UK Center for Addiction Neuromodulation DTI Pipeline"
-readonly VERSION="0.5.2"
+readonly VERSION="0.6.0"
 readonly AUTHORS="Pavan A. Anand"
-readonly COPYRIGHT_YEARS="2022"
+readonly COPYRIGHT_YEARS="2022-24"
+
+helpers::print_version() {
+  echo "
+${TITLE}, version ${VERSION}
+Copyright (C) ${COPYRIGHT_YEARS} ${AUTHORS}"
+}
 
 helpers::print_copyright() {
+  helpers::print_version
   echo "
-${TITLE}
-Version ${VERSION}
-Copyright (C) ${COPYRIGHT_YEARS} ${AUTHORS}
-
 These scripts are free software; see the \"LICENSE\" file distributed with the
 scripts to learn about copying conditions. These scripts are provided with
 absolutely no warranty: use them at your own discretion.
 
 To view more information about the warranty (or lack thereof), execute:
   $ ${PROGRAM} -w
-"  # $PROGRAM should be defined in the script that sources this one
-
-exit 0
+"  # $PROGRAM should be defined in the calling script
 }
 
 helpers::print_warranty() {
@@ -34,7 +35,5 @@ please see <https://www.gnu.org/licenses/>.
 
 To see a copyright notice, please execute:
   $ ${PROGRAM} -c
-"  # $PROGRAM should be defined in the script that sources this one
-
-exit 0
+"  # $PROGRAM should be defined in the calling script
 }

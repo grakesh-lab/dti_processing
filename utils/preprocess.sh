@@ -9,7 +9,7 @@ readonly FALSE=0
 readonly PROGRAM="$(basename $0)"
 
 if [ ! -z PROJECT_ROOT ]; then  # $PROJECT_ROOT set in run_pipeline.sh
-  source "${PROJECT_ROOT}/lib/helpers.sh"
+  source "${SCRIPT_ROOT}/lib/helpers.sh"
 else
   # TODO: handle calling script independent of run_pipeline.sh
   echo "ERROR: \"PROJECT_ROOT\" not set"
@@ -55,7 +55,7 @@ Outputs from this example would be stored under:
 
   * \"~/data/derivatives/flanker_analysis\"
 "  # NOTE: weird spacing within paragraphs for STDOUT text justification
-  
+
 # TODO: add examples & more in-depth documentation to README
 # TODO: uncomment following line when examples/extra info added to README
 # See README for more examples and in-depth documentation."

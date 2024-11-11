@@ -126,7 +126,7 @@ while getopts "${opts}" option; do
       ;;
     p)
       if ! [[ "$OPTARG" =~ ^[0-9]+$ ]]; then
-        echo -e "\nError: the -p option requires a numeric argument\n"
+        echo -e "\nError: the -p option requires a numeric argument.\n"
         exit 1
       fi
 
@@ -221,13 +221,13 @@ readonly OUTPUT=$2
 # TODO: function-ize following logic
 #count_subdirectories ${INPUT} "sub-*"
 n=$(find ${INPUT} -mindepth 1 -maxdepth 1 -type d -name "sub-*" | wc -l)
-echo "DEBUG: found ${N} subjects in INPUT."
+echo "DEBUG: found ${n} subjects in INPUT."
 if [ ${n} -eq 0 ]; then  # Trust that INPUT is a subject...
   echo "DEBUG: Starting subject-level analysis."
   bids_root=$(realpath ${INPUT}/../..)
   # TODO: replace following line with function
   n=$(find ${INPUT} -mindepth 1 -maxdepth 1 -type d -name "ses-*" | wc -l)
-  echo "DEBUG: found ${N} sessions in INPUT."
+  echo "DEBUG: found ${n} sessions in INPUT."
   if [ ${n} -eq 0 ]; then  # ... but verify that it is
     # exit_error would be good to have...
     echo "Error: INPUT contians no session subdirectories."

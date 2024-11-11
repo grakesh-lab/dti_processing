@@ -41,7 +41,7 @@ Positional parameters:
 
 ## Acknowledgements
 
-This script was created by Pavan Anand, M.D. as a member of the University of Kentucky Lab for Addiction Neuromodulation in 2022-23 and is based on [the work of the ENIGMA Consortium](https://enigma.ini.usc.edu/about-2/).
+This script was initially created by Pavan Anand, M.D. as a member of the University of Kentucky Lab for Addiction Neuromodulation in 2022-23 and is based on [the work of the ENIGMA Consortium](https://enigma.ini.usc.edu/about-2/). Work has continued throughout 2024 after having left the lab.
 
 ## CHANGELOG
 

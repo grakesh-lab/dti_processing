@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-#
+
+# skeletonize.sh
+# --------------
 # Carry out NIFTI skeletonization.
-#
-# TODO: add check for component programs, such as FSL
-# TODO: add OS & program version checks to ensure thaat script will run
-#
+
 # NOTE: uses $ENIGMA_ROOT, exported by run_analysis.sh.
 # NOTE: assumes FSLDIR has been set (see https://web.mit.edu/fsl_v5.0.10/fsl/doc/wiki/FslInstallation(2f)ShellSetup.html)
 # TODO: handle error case in which $ENIGMA_ROOT is unset, e.g., running this

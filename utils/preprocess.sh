@@ -1,67 +1,20 @@
 #!/usr/bin/env bash
-#
+
+# preprocess.sh
+# -------------
 # Perform diffusion-weighted imaging preprocessing pipeline.
 
 # Adding boolean logic aliases
 readonly TRUE=1
 readonly FALSE=0
 
-readonly PROGRAM="$(basename $0)"
-
-if [ ! -z PROJECT_ROOT ]; then  # $PROJECT_ROOT set in run_pipeline.sh
+if [ ! -z SCRIPT_ROOT ]; then  # set $SCRIPT_ROOT in calling script
   source "${SCRIPT_ROOT}/lib/helpers.sh"
 else
   # TODO: handle calling script independent of run_pipeline.sh
-  echo "ERROR: \"PROJECT_ROOT\" not set"
+  echo "ERROR: \"SCRIPT_ROOT\" not set"
   exit 1
 fi
-
-print_purpose() {
-  echo "
-This script carries out the following steps for preprocessing DWI data:
-  1. Eddy current correction
-  2. Brain extraction (a.k.a. \"skull stripping\")
-  3. Fitting tensors to each voxel
-
-IMPORTANT: Ensure that your data are structured in a BIDS-conformant manner.
-           This script assumes that they are and might break if not."
-}
-
-print_help() {
-  echo "
-Usage:
-  $ ${PROGRAM} [ -h | -c | -w ] INPUT OUTPUT
-
-Options:
-  h  Print this help message and exit
-  c  Print copyright & acknowledgement information
-  w  Print warranty information
-
-Positional arguments:
-  INPUT   Directory containing at least 1 subdirectory containing session data
-  OUTPUT  Name of directories within \"<BIDS_ROOT>/derivatives\" and
-          \"<BIDS_ROOT>/analysis\" used to store script outputs
-
-Example usage:
-  $ ${PROGRAM} ~/data/flanker/sub-01/ses-01 flanker_analysis
-
-This will run an analysis on session  1  for  subject  1  within the  \"flanker\"
-project.  <BIDS_ROOT>, in this  case,  is  \"~/data\",  as  it houses the project
-directory (i.e., \"~/data/flanker\") on which the analysis is to be performed. It
-will  search  for  (and create, if absent)  a \"derivatives\" sub-directory under
-<BIDS_ROOT>, inside which it will create the \"flanker_analysis\" sub-directory.
-
-Outputs from this example would be stored under:
-
-  * \"~/data/derivatives/flanker_analysis\"
-"  # NOTE: weird spacing within paragraphs for STDOUT text justification
-
-# TODO: add examples & more in-depth documentation to README
-# TODO: uncomment following line when examples/extra info added to README
-# See README for more examples and in-depth documentation."
-
-exit 1
-}
 
 exit_error() {  # TODO: relocate to helpers.sh
   #######################################
@@ -198,10 +151,10 @@ analyze_session() {
   if [ ! -d "${_session}/dwi" ]; then
     exit_error "no \"dwi\" subdirectory present
 
-This script expects a BIDS-formatted directory as input
-(i.e., the parent of the \"dwi\" directory). Please reformat
-the current directory to comply with the BIDS specification or
-point the script to an existing BIDS-compliant directory."
+This script expects a BIDS-formatted directory as input (i.e., the parent of
+the \"dwi\" directory). Please reformat the current directory to comply with
+the BIDS specification or point the script to an existing BIDS-compliant
+directory."
   fi
 
   # subject: $(basename $(dirname $(pwd)))
@@ -250,18 +203,6 @@ point the script to an existing BIDS-compliant directory."
   # Cleanup remaining temporary/intermediary files
   rm -rf "${tmp_dir}"
 }
-
-opts="hcw"  # TODO: add -v/--verbose option
-while getopts ${opts} option; do
-  case ${option} in
-    h) print_purpose && print_help ;;
-    c) helpers::print_copyright ;;
-    w) helpers::print_warranty ;;
-    \?) print_help ;;
-  esac
-done
-
-shift $((${OPTIND} - 1))  # TODO: test what happens if no opts given
 
 # Aliases for positional arguments
 readonly INPUT=$(realpath $1)

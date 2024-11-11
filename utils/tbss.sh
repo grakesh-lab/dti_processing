@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-#
+
+# tbss.sh
+# -------
 # Carry out tract-based spatial statistics ("TBSS").
-#
-# TODO: add check for component programs, such as FSL
-# TODO: add OS & program version checks to ensure thaat script will run
-#
+
 # NOTE: uses $ENIGMA_ROOT, exported by run_analysis.sh
 # TODO: handle error case in which $ENIGMA_ROOT is unset, e.g., running this
 #       script directly instead of being called by run_analysis.sh

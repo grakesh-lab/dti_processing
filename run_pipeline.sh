@@ -103,22 +103,10 @@ set_custom_processors=false
 opts="vhcwp:"
 while getopts "${opts}" option; do
   case ${option} in
-    v) # Print version
-      # exclusive_opts[version]=true # Uncomment if using associative arrays
-      version=true # Comment if using associative arrays
-      ;;
-    h) # Print purpose & help
-      # exclusive_opts[help]=true # Uncomment if using associative arrays
-      help=true # Comment if using associative arrays
-      ;;
-    c) # Print copyright
-      # exclusive_opts[copyright]=true # Uncomment if using associative arrays
-      copyright=true # Comment if using associative arrays
-      ;;
-    w) # Print warranty
-      # exclusive_opts[warranty]=true # Uncomment if using associative arrays
-      warranty=true # Comment if using associative arrays
-      ;;
+    v) version=true;;
+    h) help=true;;
+    c) copyright=true;;
+    w) warranty=true;;
     p) # Set number of processors to use for parallelization
       set_custom_processors=true
       desired_processors="${OPTARG}"
@@ -131,11 +119,6 @@ while getopts "${opts}" option; do
 done
 
 exclusive_opts_count=0
-# Uncomment the following block if using associative arrays
-# for opt in "${!exclusive_opts}"; do
-#  if [[ "${exclusive_opts[$opt]}" == "true" ]]; then ((exclusive_opts_count++)); fi
-# done
-# Uncomment the following block if not using associative arrays
 for opt in "$version" "$help" "$copyright" "$warranty"; do
   if [[ "$opt" == "true" ]]; then
     ((exclusive_opts_count++))
@@ -166,21 +149,6 @@ elif [[ $exclusive_opts_count -eq 1 ]] && [[ ${set_custom_processors} == "true" 
   exit 1
 fi
 
-# Uncomment this block if using associative arrays
-# if [[ "${exclusive_opts[version]}" == "true" ]]; then
-#   helpers::print_version
-#   exit 0
-# elif [[ "${exclusive_opts[help]}" == "true" ]]; then
-#   print_purpose
-#   print_help
-#   exit 0
-# elif [[ "${exclusive_opts[copyright]}" == "true" ]]; then
-#   helpers::print_copyright
-#   exit 0
-# elif [[ "${exclusive_opts[warranty]}" == "true" ]]; then
-#   helpers::print_warranty
-#   exit 0
-# fi
 if [[ "$version" == "true" ]]; then
   helpers::print_version
   exit 0
@@ -201,11 +169,6 @@ fi
 if [[ "${set_custom_processors}" == "true" ]]; then
   set_processors "${desired_processors}"
 fi
-
-# DEBUG: delete after testing
-echo "Processors: ${n_procs}/${TOTAL_PROCS}"
-echo "SUCCESS"
-exit 2
 
 # Aliases for positional arguments
 readonly INPUT=$(realpath $1)

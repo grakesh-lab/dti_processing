@@ -11,7 +11,9 @@
 # u: script stops with an error if an undefined variable is used
 # o pipefail: script stops if any intermediary step returns a non-zero exit code
 # x: output each line (helpful for debugging)
-set -euo pipefail
+# FIX: set -e causes the script to fail on Linux with Bash 5.0.17
+#set -euo pipefail
+set -uo pipefail
 
 # Global variables
 readonly PROGRAM=$(basename $0)
@@ -59,8 +61,8 @@ Options:
   -w  Print warranty information
   -p  Number of processors to use for parallelization
 
-      NOTE: this value must be numeric, must be at least 1, & cannot exceed the
-      number of processors available (as detected by the nproc command)
+      NOTE: N_PROC must be a numeric value, must be at least 1, & cannot exceed
+      the number of processors available (as detected by the nproc command)
 
 Positional arguments:
   INPUT   Directory containing at least 1 session subdirectory

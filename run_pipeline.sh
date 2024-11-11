@@ -4,13 +4,9 @@
 # ---------------
 # Perform ENIGMA diffusion-weighted imaging processing protocol.
 
-# Credit: The Mouseless Dev on YouTube (https://youtu.be/pglMlWL8bSA?si=jcy-944upmipHYt5)
-# e: script stops when an error is encountered (i.e., non-zero exit code)
+# Reference: https://youtu.be/pglMlWL8bSA?si=jcy-944upmipHYt5
 # u: script stops with an error if an undefined variable is used
 # o pipefail: script stops if any intermediary step returns a non-zero exit code
-# x: output each line (helpful for debugging)
-# FIX: set -e causes the script to fail on Linux with Bash 5.0.17
-#set -euo pipefail
 set -uo pipefail
 
 # Global variables
@@ -83,23 +79,13 @@ set_processors() {
   n_procs="${_desired_processors}"
 }
 
-# Alas! Associative arrays are a product of Bash 4.0, which does not
-# ship with macOS by default. To ensure my machine doesn't break, I
-# will not be updating macOS's shipped version and therefore have to
-# redesign this implementation to work with Bash 3.2 instead.
-# TODO: decide whether Bash 4.0 should be our minimum target
-# declare -A exclusive_opts=(
-#  [version]=false
-#  [help]=false
-#  [copyright]=false
-#  [warranty]=false
-# )
+# Exclusive option flags
 version=false
 help=false
 copyright=false
 warranty=false
 
-set_custom_processors=false
+set_custom_processors=false # -p option flag
 opts="vhcwp:"
 while getopts "${opts}" option; do
   case ${option} in

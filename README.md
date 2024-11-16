@@ -24,13 +24,18 @@ The main script, `run_analysis.sh` expects to work on (and indeed, assumes) a BI
 
 ### Syntax
 
-`$ run_pipeline.sh [ -h | -c | -w ] INPUT OUTPUT`
+`$ run_pipeline.sh [ -v | -h | -c | -w ] [ -p N_PROCS ] INPUT OUTPUT`
 
 Options:
 
-* `-h`: Display help text
-* `-c`: Display copyright text
-* `-w`: Display warranty text
+* `-v`: Display script version; exclusive
+* `-h`: Display help text; exclusive
+* `-c`: Display copyright text; exclusive
+* `-w`: Display warranty text; exclusive
+* `-p N_PROCS`: Set number of processors to use for parallelization
+  * `N_PROCS` must be a number between 1 & the maximum number of cores in a system, as determined by the `nproc` command
+
+NOTE: options identified as "exclusive" cannot be chained with any other options, whether those other options are exclusive themselves or not.
 
 Positional parameters:
 
@@ -41,11 +46,13 @@ Positional parameters:
 
 ## Acknowledgements
 
-This script was created by Pavan Anand, M.D. as a member of the University of Kentucky Lab for Addiction Neuromodulation in 2022-23 and is based on [the work of the ENIGMA Consortium](https://enigma.ini.usc.edu/about-2/).
+This script was initially created by Pavan Anand, M.D. as a member of the University of Kentucky Lab for Addiction Neuromodulation in 2022-23 and is based on [the work of the ENIGMA Consortium](https://enigma.ini.usc.edu/about-2/). Work has continued throughout 2024 after having left the lab.
 
 ## CHANGELOG
 
-### version 0.5.2
+### version 0.6.0
 
-* refactor: split off ROI analysis functionality
-  * ROI analysis actions moved from `skeletonize.sh` to `analyze_roi.sh`
+* feat!: allow user to specify number of cores to use for parallelization
+* feat: allow user to request script version independently (via `-v` flag)
+* feat: improved script usage by adding guardrails around discouraged script usage (e.g., passing more than 1 exclusive argument to the script)
+* refactor: cleaned up code base

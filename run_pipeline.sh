@@ -215,7 +215,7 @@ find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
 find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
   | parallel -j ${n_procs} "${SCRIPT_ROOT}/utils/analyze_roi.sh" {} ${ANALYSIS}
 
-echo "DEBUG: starting diffusion analyses."
+  echo "DEBUG: starting diffusion analyses."
 # MD/AD/RD analyses
 for individual in $(find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d); do
   mkdir -p ${individual}/{MD,AD,RD}/{origdata,stats,intermediary}

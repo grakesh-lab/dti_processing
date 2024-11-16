@@ -18,13 +18,13 @@ fi
 
 exit_error() {  # TODO: relocate to helpers.sh
   #######################################
-  # Exit program after printing custom error message
+  # Exit program with non-zero code after printing custom message
   # Arguments:
   #   $1: Custom error message, a string
   # Outputs:
   #  Writes error message to STDOUT
   #######################################
-  echo "Error: $1"  # TODO: consider printing to STDERR (+/- STDOUT)
+  echo "ERROR: $1"  # TODO: consider printing to STDERR (+/- STDOUT)
   exit 1  # TODO: allow use of different exit codes
 }
 

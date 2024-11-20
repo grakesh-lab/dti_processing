@@ -212,20 +212,6 @@ done
 find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
   | parallel -j ${n_procs} "${SCRIPT_ROOT}/utils/skeletonize.sh" {} ${ANALYSIS}
 
-find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
-  | parallel -j ${n_procs} "${SCRIPT_ROOT}/utils/analyze_roi.sh" {} ${ANALYSIS}
-
-echo -e "\nDEBUG: starting diffusion analyses.\n"
-# MD/AD/RD analyses
-
-# Export globals required by `diffusivity.sh`
-export ANALYSIS
-export DERIVATIVES
-
-find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
-  | xargs -I {} basename {} \
-  | parallel -j "${n_procs}" "${SCRIPT_ROOT}"/utils/diffusivity.sh {}
-
 # Clean up individua/FA directory
 for _stats_dir in "${ANALYSIS}"/individual/*/stats; do
   _fa_dir="${_stats_dir%/stats}"/FA
@@ -245,3 +231,18 @@ for _dir in $(find "${ANALYSIS}/individual" -mindepth 1 -maxdepth 1 -type d); do
     mv "${_file}" "${_dir}/FA/intermediary"
   done
 done
+
+echo -e "\nDEBUG: starting diffusion analyses.\n"
+
+# Export globals required by `diffusivity.sh`
+export ANALYSIS
+export DERIVATIVES
+
+find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
+  | xargs -I {} basename {} \
+  | parallel -j "${n_procs}" "${SCRIPT_ROOT}"/utils/diffusivity.sh {}
+
+echo -e "\nDEBUG: starting ROI analyses.\n"
+
+find ${ANALYSIS}/individual -type f -path "*/stats/*" -name "*_masked_*_skel.nii.gz"
+  | parallel -j ${n_procs} "${SCRIPT_ROOT}/utils/analyze_roi.sh" {}

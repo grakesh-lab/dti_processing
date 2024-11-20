@@ -50,6 +50,6 @@ This script was initially created by Pavan Anand, M.D. as a member of the Univer
 
 ## CHANGELOG
 
-### version 0.7.0
+### version 0.8.0
 
-* feat!: integrated diffusivity measure derivation (i.e., mean diffusivity ("MD"), axial diffusivity ("AD"), & radial diffusivity ("RD"))
+* feat!: integrate ROI analysis of diffusivity measures

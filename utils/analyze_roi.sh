@@ -5,16 +5,17 @@
 #       script directly instead of being called by run_analysis.sh
 # TODO: add "DEBUG" outputs to script
 
-readonly session="$1"
-
-id="$(basename ${session})"
+readonly skeleton="$1"
+readonly measure_path=$(basename $(dirname $(dirname "${session}")))
+readonly measure=$(basename ${measure_path})
+readonly session="$(basename $(dirname "${measure_path}"))"
 
 ${ENIGMA_ROOT}/single_subject_roi ${ENIGMA_ROOT}/JHU_roi_look_up_table.txt \
   ${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton.nii.gz \
   ${ENIGMA_ROOT}/JHU_atlas.nii.gz \
-  ${session}/stats/${id}_roi \
-  ${session}/stats/${id}_masked_FA_skel.nii.gz
+  ${measure_path}/stats/${session}_roi \
+  ${skeleton}
 
 ${ENIGMA_ROOT}/average_subject_tracts \
-  ${session}/stats/${id}_roi.csv \
-  ${session}/stats/${id}_roi_avg.csv
+  ${measure_path}/stats/${session}_roi.csv \
+  ${measure_path}/stats/${session}_roi_avg.csv

@@ -214,3 +214,14 @@ find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
 
 find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
   | parallel -j ${n_procs} "${SCRIPT_ROOT}/utils/analyze_roi.sh" {} ${ANALYSIS}
+
+echo -e "\nDEBUG: starting diffusion analyses.\n"
+# MD/AD/RD analyses
+
+# Export globals required by `diffusivity.sh`
+export ANALYSIS
+export DERIVATIVES
+
+find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
+  | xargs -I {} basename {} \
+  | parallel -j "${n_procs}" "${SCRIPT_ROOT}"/utils/diffusivity.sh {}

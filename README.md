@@ -50,9 +50,6 @@ This script was initially created by Pavan Anand, M.D. as a member of the Univer
 
 ## CHANGELOG
 
-### version 0.6.0
+### version 0.7.0
 
-* feat!: allow user to specify number of cores to use for parallelization
-* feat: allow user to request script version independently (via `-v` flag)
-* feat: improved script usage by adding guardrails around discouraged script usage (e.g., passing more than 1 exclusive argument to the script)
-* refactor: cleaned up code base
+* feat!: integrated diffusivity measure derivation (i.e., mean diffusivity ("MD"), axial diffusivity ("AD"), & radial diffusivity ("RD"))

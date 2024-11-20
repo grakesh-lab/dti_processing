@@ -225,3 +225,23 @@ export DERIVATIVES
 find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
   | xargs -I {} basename {} \
   | parallel -j "${n_procs}" "${SCRIPT_ROOT}"/utils/diffusivity.sh {}
+
+# Clean up individua/FA directory
+for _stats_dir in "${ANALYSIS}"/individual/*/stats; do
+  _fa_dir="${_stats_dir%/stats}"/FA
+  mv "${_stats_dir}" "${_fa_dir}"
+done
+
+for _dir in $(find "${ANALYSIS}"/individual -mindepth 1 -maxdepth 1 -type d); do
+  _subject="$(basename ${_dir})"
+  _target="${_subject}"_FA.nii.gz
+  mkdir -p ${_dir}/FA/origdata
+  mv "${_dir}"/FA/"${_target}" "${_dir}"/FA/origdata
+done
+
+for _dir in $(find "${ANALYSIS}/individual" -mindepth 1 -maxdepth 1 -type d); do
+  mkdir "${_dir}/FA/intermediary"
+  for _file in $(find "${_dir}/FA" -mindepth 1 -maxdepth 1 -type f); do
+    mv "${_file}" "${_dir}/FA/intermediary"
+  done
+done

@@ -6,7 +6,7 @@
 # TODO: add "DEBUG" outputs to script
 
 readonly skeleton="$1"
-readonly measure_path=$(basename $(dirname $(dirname "${session}")))
+readonly measure_path=$(dirname $(dirname "${session}"))
 readonly measure=$(basename ${measure_path})
 readonly session="$(basename $(dirname "${measure_path}"))"
 

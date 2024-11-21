@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# analyze_roi.sh
+# --------------
+# Calculate diffusivity & anisotropy of regions of interest.
+
 # NOTE: uses $ENIGMA_ROOT, exported by run_analysis.sh
 # TODO: handle error case in which $ENIGMA_ROOT is unset, e.g., running this
 #       script directly instead of being called by run_analysis.sh

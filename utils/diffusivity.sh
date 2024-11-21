@@ -23,7 +23,7 @@ mask_diffusivity_measures() {
   for _measure in "MD" "AD" "RD"; do
     local _filename="${SUBJECT}"_"${_measure}".nii.gz
     fslmaths "${_subject_dir}"/"${_measure}"/origdata/"${_filename}" -mas \
-      "${ANALYSIS}"/FA/intermediary/"${SUBJECT}"_FA_mask.nii.gz \
+      "${_subject_dir}"/FA/intermediary/"${SUBJECT}"_FA_mask.nii.gz \
       "${_subject_dir}"/"${_measure}"/intermediary/"${SUBJECT}"
   done
 }

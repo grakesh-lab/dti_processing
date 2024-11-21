@@ -244,5 +244,5 @@ find ${ANALYSIS}/individual -mindepth 1 -maxdepth 1 -type d \
 
 echo -e "\nDEBUG: starting ROI analyses.\n"
 
-find ${ANALYSIS}/individual -type f -path "*/stats/*" -name "*_masked_*_skel.nii.gz"
+find ${ANALYSIS}/individual -type f -path "*/stats/*" -name "*_masked_*_skel.nii.gz" \
   | parallel -j ${n_procs} "${SCRIPT_ROOT}/utils/analyze_roi.sh" {}

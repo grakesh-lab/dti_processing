@@ -23,7 +23,7 @@ mask_diffusivity_measures() {
   for _measure in "MD" "AD" "RD"; do
     local _filename="${SUBJECT}"_"${_measure}".nii.gz
     fslmaths "${_subject_dir}"/"${_measure}"/origdata/"${_filename}" -mas \
-      "${ANALYSIS}"/FA/"${SUBJECT}"_FA_mask.nii.gz \
+      "${_subject_dir}"/FA/intermediary/"${SUBJECT}"_FA_mask.nii.gz \
       "${_subject_dir}"/"${_measure}"/intermediary/"${SUBJECT}"
   done
 }
@@ -36,7 +36,7 @@ warp_masked_measures() {
       -i "${_intermediary_dir}"/"${SUBJECT}".nii.gz \
       -o "${_intermediary_dir}"/"${SUBJECT}"_to_target.nii.gz \
       -r "${FSLDIR}"/data/standard/FMRIB58_FA_1mm \
-      -w "${_subject_dir}"/FA/"${SUBJECT}"_FA_to_target_warp.nii.gz
+      -w "${_subject_dir}"/FA/intermediary/"${SUBJECT}"_FA_to_target_warp.nii.gz
   done
 }
 
@@ -58,7 +58,7 @@ skeletonize_measures() {
       -p 0.049 \
       "${ENIGMA_ROOT}"/ENIGMA_DTI_FA_skeleton_mask_dst.nii.gz \
       "${FSLDIR}"/data/standard/LowerCingulum_1mm.nii.gz \
-      "${_subject_dir}"/FA/"${SUBJECT}"_masked_FA.nii.gz \
+      "${_subject_dir}"/FA/intermediary/"${SUBJECT}"_masked_FA.nii.gz \
       "${_subject_dir}"/"${_measure}"/stats/"${SUBJECT}"_masked_"${_measure}"_skel.nii.gz \
         -a "${_subject_dir}"/"${_measure}"/intermediary/"${SUBJECT}"_masked_"${_measure}".nii.gz \
         -s "${ENIGMA_ROOT}"/ENIGMA_DTI_FA_mask.nii.gz

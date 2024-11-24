@@ -9,17 +9,16 @@
 #       script directly instead of being called by run_analysis.sh
 # TODO: add "DEBUG" outputs to script
 
-readonly skeleton="$1"
-readonly measure_path=$(dirname $(dirname "${skeleton}"))
-readonly measure=$(basename ${measure_path})
-readonly session="$(basename $(dirname "${measure_path}"))"
+readonly SKELETON="${1}"
+readonly MEASURE_PATH="$(dirname "$(dirname "${SKELETON}")")"
+readonly SESSION="$(basename "$(dirname "${MEASURE_PATH}")")"
 
-${ENIGMA_ROOT}/single_subject_roi ${ENIGMA_ROOT}/JHU_roi_look_up_table.txt \
-  ${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton.nii.gz \
-  ${ENIGMA_ROOT}/JHU_atlas.nii.gz \
-  ${measure_path}/stats/${session}_roi \
-  ${skeleton}
+${ENIGMA_ROOT}/single_subject_roi "${ENIGMA_ROOT}/JHU_roi_look_up_table.txt" \
+  "${ENIGMA_ROOT}/ENIGMA_DTI_FA_SKELETON.nii.gz" \
+  "${ENIGMA_ROOT}/JHU_atlas.nii.gz" \
+  "${MEASURE_PATH}/stats/${SESSION}_roi" \
+  "${SKELETON}"
 
 ${ENIGMA_ROOT}/average_subject_tracts \
-  ${measure_path}/stats/${session}_roi.csv \
-  ${measure_path}/stats/${session}_roi_avg.csv
+  "${MEASURE_PATH}/stats/${SESSION}_roi.csv" \
+  "${MEASURE_PATH}/stats/${SESSION}_roi_av"g.csv

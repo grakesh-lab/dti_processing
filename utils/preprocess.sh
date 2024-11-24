@@ -24,7 +24,7 @@ exit_error() {  # TODO: relocate to helpers.sh
   # Outputs:
   #  Writes error message to STDOUT
   #######################################
-  echo "ERROR: $1"  # TODO: consider printing to STDERR (+/- STDOUT)
+  echo "ERROR: ${1}"  # TODO: consider printing to STDERR (+/- STDOUT)
   exit 1  # TODO: allow use of different exit codes
 }
 
@@ -39,9 +39,9 @@ create_dir(){  # TODO: relocate to helpers.sh
   #######################################
   if [ ! -d "${1}" ]; then
     echo "DEBUG: \"${1}\" does not exist; creating now..."
-    mkdir -p $1
+    mkdir -p "${1}"
   else
-    if [[ $2 -eq 1 ]]; then
+    if [[ "${2}" -eq 1 ]]; then
       exit_error "specified directory \"${1}\" already exists"
     else
       :
@@ -60,12 +60,12 @@ identify_file(){  # TODO: relocate to helpers.sh
   # Outputs:
   #   Prints information about pattern match status to STDOUT
   #######################################
-  local -r _scope="$1"
-  local -r _pattern="$2"
+  local -r _scope="${1}"
+  local -r _pattern="${2}"
   # TODO: rewrite match count logic to match main logic (i.e., using wc -l)
   IFS=$'\n'; local _matches=$(find ${_scope} -name ${_pattern}); unset IFS
   local -r _match_count="${#_matches[@]}"
-  if [ ${_match_count} -gt 1 ]; then
+  if [ "${_match_count}" -gt 1 ]; then
     # TODO: consider passing & handling a warning instead of an error
     # NOTE: "handling" this case would mean selecting the largest file out of
     #       the match results, which mirrors what we have been doing manually
@@ -96,12 +96,12 @@ eddy_correction(){  # TODO: minimize creation of extraneous functions
   # Outputs:
   #   Prints script status update to STDOUT
   #######################################
-  echo "Correcting for eddy currents within $1..."
+  echo "Correcting for eddy currents within ${1}..."
   # WARN: does *not* like spaces anywhere in file path arguments!
   # TODO: redefine tmp_dir as global, rename to all-caps to signify
   # WARN: Using local, readonly variable ($tmp_dir) in separate function...
   eddy_output="${tmp_dir}/${2}_eddy_corrected"
-  eddy_correct "$1" ${eddy_output} 0
+  eddy_correct "${1}" "${eddy_output}" 0
 }
 
 brain_extraction(){  # TODO: minimize creation of extraneous functions
@@ -122,7 +122,7 @@ brain_extraction(){  # TODO: minimize creation of extraneous functions
   # TODO: redefine tmp_dir as global, rename to all-caps to signify
   # WARN: Using local, readonly variable ($tmp_dir) in separate function...
   bet_output="${tmp_dir}/${2}_${file_basename}"
-  bet "$1" ${bet_output} -F -f .3
+  bet "${1}" "${bet_output}" -F -f .3
 }
 
 analyze_session() {
@@ -139,11 +139,11 @@ analyze_session() {
   # Outputs:
   #   Prints script status update to STDOUT
   #######################################
-  local -r _session=$1
+  local -r _session="${1}"
 
-  if [ -d ${_session} ]; then
+  if [ -d "${_session}" ]; then
     echo "DEBUG: analyzing \"${_session}\"..."
-    cd ${_session}
+    cd "${_session}"
   else
     exit_error "please pass a (existing) directory to the script"
   fi
@@ -159,12 +159,12 @@ directory."
 
   # subject: $(basename $(dirname $(pwd)))
   # session: $(basename $(pwd))
-  local -r _prefix="$(basename $(dirname $(pwd)))_$(basename $(pwd))"
+  local -r _prefix=""$(basename "$(dirname "$(pwd)")")"_"$(basename "$(pwd)")""
   local -r _session_outputs="${OUTPUT}/${_prefix}"
   readonly tmp_dir="${_session_outputs}/tmp"  # TODO: make $tmp_dir local
 
-  create_dir ${_session_outputs} ${TRUE}
-  create_dir ${tmp_dir} ${FALSE}
+  create_dir "${_session_outputs}" "${TRUE}"
+  create_dir "${tmp_dir}" "${FALSE}"
 
   readonly file_basename="brain"  # TODO: make $file_basename local
 
@@ -205,8 +205,8 @@ directory."
 }
 
 # Aliases for positional arguments
-readonly INPUT=$(realpath $1)
-readonly OUTPUT=$2  # TODO: ensure that string only—not a path—is provided
+readonly INPUT="$(realpath "${1}")"
+readonly OUTPUT="${2}" # TODO: ensure that string only—not a path—is provided
 
 # TODO: create main() & call that here instead
-analyze_session ${INPUT} ${OUTPUT}
+analyze_session "${INPUT}" "${OUTPUT}"

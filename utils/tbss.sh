@@ -15,3 +15,5 @@ cd "${INPUT}"
 tbss_1_preproc *".nii.gz"  # Produces FA mask
 tbss_2_reg -t "${ENIGMA_ROOT}/ENIGMA_DTI_FA.nii.gz"  # Register to ENIGMA target
 tbss_3_postreg -S  # Create mean/all FA, mean FA mask, & mean FA skeleton
+
+exit 0

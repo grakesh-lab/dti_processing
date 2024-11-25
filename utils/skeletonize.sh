@@ -29,3 +29,5 @@ tbss_skeleton \
   "${session}/FA/${id}_masked_FA.nii.gz" \
   "${session}/stats/${id}_masked_FA_skel.nii.gz" \
   -s "${ENIGMA_ROOT}/ENIGMA_DTI_FA_mask.nii.gz"
+
+exit 0

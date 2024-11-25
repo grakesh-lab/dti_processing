@@ -22,3 +22,5 @@ ${ENIGMA_ROOT}/single_subject_roi "${ENIGMA_ROOT}/JHU_roi_look_up_table.txt" \
 ${ENIGMA_ROOT}/average_subject_tracts \
   "${MEASURE_PATH}/stats/${SESSION}_roi.csv" \
   "${MEASURE_PATH}/stats/${SESSION}_roi_av"g.csv
+
+exit 0

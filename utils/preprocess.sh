@@ -16,7 +16,7 @@ else
   exit 1
 fi
 
-exit_error() {  # TODO: relocate to helpers.sh
+function exit_error() {  # TODO: relocate to helpers.sh
   #######################################
   # Exit program with non-zero code after printing custom message
   # Arguments:
@@ -28,7 +28,7 @@ exit_error() {  # TODO: relocate to helpers.sh
   exit 1  # TODO: allow use of different exit codes
 }
 
-create_dir(){  # TODO: relocate to helpers.sh
+function create_dir(){  # TODO: relocate to helpers.sh
   #######################################
   # Create a directory; optionally, exit if it already exists
   # Arguments:
@@ -49,7 +49,7 @@ create_dir(){  # TODO: relocate to helpers.sh
   fi
 }
 
-identify_file(){  # TODO: relocate to helpers.sh
+function identify_file(){  # TODO: relocate to helpers.sh
   #######################################
   # Save path of a file to a global variable
   # Globals:
@@ -84,7 +84,7 @@ identify_file(){  # TODO: relocate to helpers.sh
   fi
 }
 
-eddy_correction(){  # TODO: minimize creation of extraneous functions
+function eddy_correction(){  # TODO: minimize creation of extraneous functions
   #######################################
   # Perform eddy current correction
   # Globals:
@@ -100,11 +100,11 @@ eddy_correction(){  # TODO: minimize creation of extraneous functions
   # WARN: does *not* like spaces anywhere in file path arguments!
   # TODO: redefine tmp_dir as global, rename to all-caps to signify
   # WARN: Using local, readonly variable ($tmp_dir) in separate function...
-  eddy_output="${tmp_dir}/${2}_eddy_corrected"
-  eddy_correct "${1}" "${eddy_output}" 0
+  local -r _eddy_output="${tmp_dir}/${2}_eddy_corrected"
+  eddy_correct "${1}" "${_eddy_output}" 0
 }
 
-brain_extraction(){  # TODO: minimize creation of extraneous functions
+function brain_extraction()  {  # TODO: minimize creation of extraneous functions
   #######################################
   # Skull strip the input image
   # Globals:
@@ -121,11 +121,12 @@ brain_extraction(){  # TODO: minimize creation of extraneous functions
   # TODO: investigate feasibility of using `bet2` instead
   # TODO: redefine tmp_dir as global, rename to all-caps to signify
   # WARN: Using local, readonly variable ($tmp_dir) in separate function...
-  bet_output="${tmp_dir}/${2}_${file_basename}"
-  bet "${1}" "${bet_output}" -F -f .3
+  local -r _bet_output="${tmp_dir}/${2}_${file_basename}"
+  bet "${1}" "${_bet_output}" -F -f .3
+  return 0
 }
 
-analyze_session() {
+function analyze_session() {
   #######################################
   # Conduct analysis of an individual session's data
   # Globals:
@@ -170,7 +171,7 @@ directory."
 
   identify_file "${_session}/dwi" "*.nii.gz"
   echo "Unzipping ${selected_file} to ${tmp_dir}..."
-  local _filename="${_prefix}_${file_basename}.nii"
+  local -r _filename="${_prefix}_${file_basename}.nii"
   gunzip < "${selected_file}" > "${tmp_dir}/${_filename}"
 
   # Correct eddy currents
@@ -202,6 +203,7 @@ directory."
 
   # Cleanup remaining temporary/intermediary files
   rm -rf "${tmp_dir}"
+  return 0
 }
 
 # Aliases for positional arguments
@@ -210,3 +212,5 @@ readonly OUTPUT="${2}" # TODO: ensure that string only—not a path—is provide
 
 # TODO: create main() & call that here instead
 analyze_session "${INPUT}" "${OUTPUT}"
+
+exit 0

@@ -20,7 +20,7 @@ export SCRIPT_ROOT
 # Importing libraries
 source "${SCRIPT_ROOT}/lib/helpers.sh"
 
-print_purpose() {
+function print_purpose() {
   echo "
 This  script  wraps  discrete  parts of the DTI pre-processing,  processing,  &
 statistical analyses pipelines.  Altogether, the following steps are performed:
@@ -35,10 +35,12 @@ IMPORTANT: Ensure that  your data are  structured in a  BIDS-conformant manner.
            assumes that  the tools that ENIGMA  provides for these analyses are
            located under a  directory  titled  \"enigma_tools\"  under  the  root
            BIDS directory. See \"${PROGRAM} -h\" for more info."
+
+  return 0
 }
 
 # NOTE: variable spacing within paragraphs for STDOUT text justification
-print_help() {
+function print_help() {
   echo "
 Usage:
   $ ${PROGRAM} [ -v | -h | -c | -w ] [ -p N_PROC ] INPUT OUTPUT
@@ -59,11 +61,13 @@ Positional arguments:
           directories of \"<BIDS_ROOT>\" to store script outputs
 
 See README for more examples and in-depth documentation."
+
+  return 0
 }
 
 # Default number of processors
 N_PROCS=$(("$(nproc)"/2))  # Number of processors to be used (default = 1/2 available)
-set_processors() {
+function set_processors() {
   local _desired_processors="${1}"
 
   if ! [[ "${_desired_processors}" =~ ^[0-9]+$ ]]; then
@@ -76,7 +80,9 @@ set_processors() {
     exit 1
   fi
 
+  # Ideally, this value would be echo'ed & used to set N_PROCS via assignment
   N_PROCS="${_desired_processors}"
+  return 0
 }
 
 # Exclusive option flags
@@ -245,3 +251,5 @@ echo -e "\nDEBUG: starting ROI analyses.\n"
 
 find "${ANALYSIS}/individual" -type f -path "*/stats/*" -name "*_masked_*_skel.nii.gz" \
   | parallel -j "${N_PROCS}" "${SCRIPT_ROOT}/utils/analyze_roi.sh" "{}"
+
+exit 0

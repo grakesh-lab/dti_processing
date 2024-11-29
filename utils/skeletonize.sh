@@ -10,22 +10,24 @@
 #       script directly instead of being called by run_analysis.sh
 # TODO: add "DEBUG" outputs to script
 
-readonly session="$1"
-readonly analysis_root="$2"
+readonly session="${1}"
+readonly analysis_root="${2}"
 
-id="$(basename ${session})"
+id="$(basename "${session}")"
 
-cp ${analysis_root}/FA/${id}_*.nii.gz ${session}/FA
+cp "${analysis_root}/FA/${id}_*.nii.gz ${session}/FA"
 
-fslmaths ${session}/FA/${id}_FA_to_target.nii.gz \
-  -mas ${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton_mask.nii.gz \
-  ${session}/FA/${id}_masked_FA.nii.gz
+fslmaths "${session}/FA/${id}_FA_to_target.nii.gz" \
+  -mas "${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton_mask.nii.gz" \
+  "${session}/FA/${id}_masked_FA.nii.gz"
 
 tbss_skeleton \
-  -i ${session}/FA/${id}_masked_FA.nii.gz \
+  -i "${session}/FA/${id}_masked_FA.nii.gz" \
   -p 0.049 \
-  ${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton_mask_dst.nii.gz \
-  ${FSLDIR}/data/standard/LowerCingulum_1mm.nii.gz \
-  ${session}/FA/${id}_masked_FA.nii.gz \
-  ${session}/stats/${id}_masked_FA_skel.nii.gz \
-  -s ${ENIGMA_ROOT}/ENIGMA_DTI_FA_mask.nii.gz
+  "${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton_mask_dst.nii.gz" \
+  "${FSLDIR}/data/standard/LowerCingulum_1mm.nii.gz" \
+  "${session}/FA/${id}_masked_FA.nii.gz" \
+  "${session}/stats/${id}_masked_FA_skel.nii.gz" \
+  -s "${ENIGMA_ROOT}/ENIGMA_DTI_FA_mask.nii.gz"
+
+exit 0

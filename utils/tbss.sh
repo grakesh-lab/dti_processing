@@ -9,9 +9,11 @@
 #       script directly instead of being called by run_analysis.sh
 # TODO: add "DEBUG" outputs to script
 
-readonly INPUT="$1"
+readonly INPUT="${1}"
 
-cd ${INPUT}
-tbss_1_preproc *.nii.gz  # Produces FA mask
-tbss_2_reg -t ${ENIGMA_ROOT}/ENIGMA_DTI_FA.nii.gz  # Register to ENIGMA target
+cd "${INPUT}"
+tbss_1_preproc *".nii.gz"  # Produces FA mask
+tbss_2_reg -t "${ENIGMA_ROOT}/ENIGMA_DTI_FA.nii.gz"  # Register to ENIGMA target
 tbss_3_postreg -S  # Create mean/all FA, mean FA mask, & mean FA skeleton
+
+exit 0

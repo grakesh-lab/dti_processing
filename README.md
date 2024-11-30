@@ -50,8 +50,10 @@ This script was initially created by Pavan Anand, M.D. as a member of the Univer
 
 ## CHANGELOG
 
-### version 0.8.1
+### version 0.9.0
 
-This version represents a functional, stable, presentable, product for production use and is ready for others to test the whole DTI processing pipeline end-to-end. Huzzah! 🎉
+Turns out v0.8.1 actually contained within it _several_ bugs that were not caught in the testing environment. These have now been ironed out.
+
+Which means that _this_ version now represents a functional, stable, presentable, product for production use and is ready for others to test the whole DTI processing pipeline end-to-end. Huzzah (again)! 🎉
 
 Any remaining changes between stock ENIGMA files that were changed in any way to complete this project will be outlined in either a wiki in this GitHub repository or in this README file.

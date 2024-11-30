@@ -13,14 +13,14 @@ readonly SKELETON="${1}"
 readonly MEASURE_PATH="$(dirname "$(dirname "${SKELETON}")")"
 readonly SESSION="$(basename "$(dirname "${MEASURE_PATH}")")"
 
-${ENIGMA_ROOT}/single_subject_roi "${ENIGMA_ROOT}/JHU_roi_look_up_table.txt" \
-  "${ENIGMA_ROOT}/ENIGMA_DTI_FA_SKELETON.nii.gz" \
-  "${ENIGMA_ROOT}/JHU_atlas.nii.gz" \
+${ENIGMA_TOOLS}/single_subject_roi "${REFERENCE_ROOT}/JHU/JHU_roi_look_up_table.txt" \
+  "${REFERENCE_ROOT}/ENIGMA/ENIGMA_DTI_FA_skeleton.nii.gz" \
+  "${REFERENCE_ROOT}/JHU/JHU_atlas.nii.gz" \
   "${MEASURE_PATH}/stats/${SESSION}_roi" \
   "${SKELETON}"
 
-${ENIGMA_ROOT}/average_subject_tracts \
+${ENIGMA_TOOLS}/average_subject_tracts \
   "${MEASURE_PATH}/stats/${SESSION}_roi.csv" \
-  "${MEASURE_PATH}/stats/${SESSION}_roi_av"g.csv
+  "${MEASURE_PATH}/stats/${SESSION}_roi_avg.csv"
 
 exit 0

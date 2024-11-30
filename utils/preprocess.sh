@@ -100,8 +100,8 @@ function eddy_correction(){  # TODO: minimize creation of extraneous functions
   # WARN: does *not* like spaces anywhere in file path arguments!
   # TODO: redefine tmp_dir as global, rename to all-caps to signify
   # WARN: Using local, readonly variable ($tmp_dir) in separate function...
-  local -r _eddy_output="${tmp_dir}/${2}_eddy_corrected"
-  eddy_correct "${1}" "${_eddy_output}" 0
+  readonly eddy_output="${tmp_dir}/${2}_eddy_corrected"  # TODO: make $eddy_output local
+  eddy_correct "${1}" "${eddy_output}" 0
 }
 
 function brain_extraction()  {  # TODO: minimize creation of extraneous functions
@@ -121,8 +121,8 @@ function brain_extraction()  {  # TODO: minimize creation of extraneous function
   # TODO: investigate feasibility of using `bet2` instead
   # TODO: redefine tmp_dir as global, rename to all-caps to signify
   # WARN: Using local, readonly variable ($tmp_dir) in separate function...
-  local -r _bet_output="${tmp_dir}/${2}_${file_basename}"
-  bet "${1}" "${_bet_output}" -F -f .3
+  readonly bet_output="${tmp_dir}/${2}_${file_basename}"  # TODO: make $bet_output local
+  bet "${1}" "${bet_output}" -F -f .3
   return 0
 }
 

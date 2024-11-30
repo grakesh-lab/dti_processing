@@ -212,6 +212,7 @@ if [ ! -d "${bids_root}/utils" ]; then
   cp "${_reference_archive_location}/singleSubjROI_exe" "${bids_root}/utils/single_subject_roi"
   cp "${_reference_archive_location}/JHU-WhiteMatter-labels-1mm.nii.gz" "${bids_root}/reference/JHU/JHU_atlas.nii.gz"
   cp "${_reference_archive_location}/ENIGMA_look_up_table.txt" "${bids_root}/reference/JHU/JHU_roi_look_up_table.txt"
+  rm -rf "${_reference_archive_location}.zip"
   rm -rf "${_reference_archive_location}"
 fi
 
@@ -223,6 +224,7 @@ readonly DERIVATIVES="${bids_root}/derivatives/${OUTPUT}"
 export DERIVATIVES
 #create_dir ${DERIVATIVES} ${FALSE}  # Would be nice to have create_dir...
 mkdir -p "${DERIVATIVES}"
+echo -e "\n\nDEBUG: starting preprocessing pipeline"
 find "${INPUT}" -type d -name "ses-*" \
   | parallel -j "${N_PROCS}" "${SCRIPT_ROOT}/utils/preprocess.sh" "{}" "${DERIVATIVES}"
 
@@ -234,25 +236,30 @@ mkdir -p "${ANALYSIS}"
 # TODO: relocate identify_file() to helpers.sh to import here
 # TODO: make use of identify_file() for the following
 # TODO: modify identify_file() to be compatible with above requirement
+echo -e "DEBUG: moving files from \"derivatives\" into \"analysis\"."
 for _file in $(find "${DERIVATIVES}" -name "*_FA.nii.gz"); do
   cp "${_file}" "${ANALYSIS}/$(echo $(basename ${_file}) | sed -r 's/_FA//g')"
 done
 
+echo -e "\n\nDEBUG: starting TBSS pipeline."
 "${SCRIPT_ROOT}"/utils/tbss.sh "${ANALYSIS}"
 
-matches="$(find "${ANALYSIS}/FA" -maxdepth 1 -mindepth 1 -type f -name "*.nii.gz")"
-names="$(for result in "${matches}"; do echo "$(basename "${result}")" | sed -r "s/_FA.*//g"; done \
+echo -e "\n\nDEBUG: moving analyzed files into individual session subdirectories."
+matches=$(find "${ANALYSIS}/FA" -maxdepth 1 -mindepth 1 -type f -name "*.nii.gz")
+names=$(for result in ${matches}; do echo $(basename ${result}) | sed -r "s/_FA.*//g"; done \
   | sort \
   | uniq \
-  | grep "sub-.*")"
-for _label in "${names}"; do
+  | grep "sub-.*")
+for _label in ${names}; do
   mkdir -p "${ANALYSIS}/individual/${_label}/"{stats,FA}
 done
 
+echo -e "\n\nDEBUG: starting skeletonization process."
 find "${ANALYSIS}/individual" -mindepth 1 -maxdepth 1 -type d \
   | parallel -j "${N_PROCS}" "${SCRIPT_ROOT}/utils/skeletonize.sh" "{}" "${ANALYSIS}"
 
 # Clean up individua/FA directory
+echo -e "DEBUG: cleaning up analyzed file directory."
 for _stats_dir in "${ANALYSIS}/individual/"*"/stats"; do
   _fa_dir="${_stats_dir%/stats}/FA"
   mv "${_stats_dir}" "${_fa_dir}"
@@ -272,14 +279,12 @@ for _dir in $(find "${ANALYSIS}/individual" -mindepth 1 -maxdepth 1 -type d); do
   done
 done
 
-echo -e "\nDEBUG: starting diffusion analyses.\n"
-
+echo -e "\n\nDEBUG: starting diffusion analyses."
 find "${ANALYSIS}/individual" -mindepth 1 -maxdepth 1 -type d \
   | xargs -I "{}" basename "{}" \
   | parallel -j "${N_PROCS}" "${SCRIPT_ROOT}/utils/diffusivity.sh" "{}"
 
-echo -e "\nDEBUG: starting ROI analyses.\n"
-
+echo -e "\n\nDEBUG: starting ROI analyses."
 find "${ANALYSIS}/individual" -type f -path "*/stats/*" -name "*_masked_*_skel.nii.gz" \
   | parallel -j "${N_PROCS}" "${SCRIPT_ROOT}/utils/analyze_roi.sh" "{}"
 

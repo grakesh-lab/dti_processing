@@ -33,7 +33,8 @@ function mask_diffusivity_measures() {
 function warp_masked_measures() {
   local -r _subject_dir="${INDIVIDUAL}/${SUBJECT}"
   for _measure in "MD" "AD" "RD"; do
-    local -r _intermediary_dir="${_subject_dir}/${_measure}/intermediary"
+    # TODO: why can this not be read-only?
+    local _intermediary_dir="${_subject_dir}/${_measure}/intermediary"
     applywarp \
       -i "${_intermediary_dir}/${SUBJECT}.nii.gz" \
       -o "${_intermediary_dir}/${SUBJECT}_to_target.nii.gz" \
@@ -46,9 +47,10 @@ function warp_masked_measures() {
 function mask_measure_targets() {
   local -r _subject_dir="${INDIVIDUAL}/${SUBJECT}"
   for _measure in "MD" "AD" "RD"; do
-    local -r _intermediary_dir="${_subject_dir}/${_measure}/intermediary"
+    # TODO: why can this not be read-only?
+    local _intermediary_dir="${_subject_dir}/${_measure}/intermediary"
     fslmaths "${_intermediary_dir}/${SUBJECT}_to_target.nii.gz" \
-      -mas "${ENIGMA_ROOT}/ENIGMA_DTI_FA_mask.nii.gz" \
+      -mas "${REFERENCE_ROOT}/ENIGMA/ENIGMA_DTI_FA_mask.nii.gz" \
       "${_intermediary_dir}/${SUBJECT}_masked_${_measure}.nii.gz"
   done
   return 0
@@ -58,14 +60,14 @@ function skeletonize_measures() {
   local -r _subject_dir="${INDIVIDUAL}/${SUBJECT}"
   for _measure in "MD" "AD" "RD"; do
     tbss_skeleton \
-      -i "${ENIGMA_ROOT}/ENIGMA_DTI_FA.nii.gz" \
+      -i "${REFERENCE_ROOT}/ENIGMA/ENIGMA_DTI_FA.nii.gz" \
       -p 0.049 \
-      "${ENIGMA_ROOT}/ENIGMA_DTI_FA_skeleton_mask_dst.nii.gz" \
+      "${REFERENCE_ROOT}/ENIGMA/ENIGMA_DTI_FA_skeleton_mask_dst.nii.gz" \
       "${FSLDIR}/data/standard/LowerCingulum_1mm.nii.gz" \
       "${_subject_dir}/FA/intermediary/${SUBJECT}_masked_FA.nii.gz" \
       "${_subject_dir}/${_measure}/stats/${SUBJECT}_masked_${_measure}_skel.nii.gz" \
         -a "${_subject_dir}/${_measure}/intermediary/${SUBJECT}_masked_${_measure}.nii.gz" \
-        -s "${ENIGMA_ROOT}/ENIGMA_DTI_FA_mask.nii.gz"
+        -s "${REFERENCE_ROOT}/ENIGMA/ENIGMA_DTI_FA_mask.nii.gz"
   done
   return 0
 }
@@ -73,7 +75,8 @@ function skeletonize_measures() {
 # Make GNU parallel aware of these variables & functions
 export ANALYSIS
 export DERIVATIVES
-export ENIGMA_ROOT
+export ENIGMA_TOOLS
+export REFERENCE_ROOT
 export -f derive_diffusivity_measures
 export -f mask_diffusivity_measures
 export -f warp_masked_measures

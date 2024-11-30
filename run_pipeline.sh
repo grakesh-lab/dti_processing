@@ -136,7 +136,7 @@ elif [[ "${exclusive_opts_count}" -eq 1 ]] && [[ $# -ne 0 ]]; then
 elif [[ "${exclusive_opts_count}" -eq 0 ]] && [[ $# -ne 2 ]]; then
   echo "ERROR: expected 2 positional arguments. See \"${PROGRAM} -h\" for help."
   exit 1
-elif [[ "${exclusive_opts_count}"-eq 1 ]] && [[ "${set_custom_processors}" == "true" ]]; then
+elif [[ "${exclusive_opts_count}" -eq 1 ]] && [[ "${set_custom_processors}" == "true" ]]; then
   echo "ERROR: cannot set number of processors with exclusive flag."
   exit 1
 fi
@@ -186,8 +186,39 @@ else  # INPUT is a project
   bids_root="$(realpath "${INPUT}/..")"
 fi
 
-readonly ENIGMA_ROOT="${bids_root}/enigma_tools"
-export ENIGMA_ROOT
+if [ ! -d "${bids_root}/reference" ]; then
+  echo -e "DEBUG: \"reference\" directory not found within BIDS root; creating now..."
+  readonly _dti_archive_name="enigma_dti_templates"
+  readonly _dti_archive_location="${bids_root}/${_dti_archive_name}"
+  readonly _dti_url="http://enigma.ini.usc.edu/wp-content/uploads/2013/02/enigmaDTI.zip"
+  mkdir -p "${bids_root}/reference/"{ENIGMA,JHU}
+  wget -O "${_dti_archive_location}.zip" "${_dti_url}"
+  unzip "${_dti_archive_location}.zip" -d "${bids_root}/reference/ENIGMA"
+  rm -rf "${_dti_archive_location}.zip"
+fi
+
+if [ ! -d "${bids_root}/utils" ]; then
+  echo -e "DEBUG: \"utils\" directory not found within BIDS root; creating now..."
+  readonly _reference_archive_name="enigma_roi_extraction_tools"
+  readonly _reference_archive_location="${bids_root}/${_reference_archive_name}"
+  readonly _reference_url="http://enigma.ini.usc.edu/wp-content/uploads/2012/06/ROIextraction_info.zip"
+  mkdir "${bids_root}/utils"
+  wget -O "${_reference_archive_location}.zip" "${_reference_url}"
+  unzip "${_reference_archive_location}.zip" -d "${bids_root}"
+  rm -rf "${bids_root}/__MACOSX"
+  mv "${bids_root}/ROIextraction_info" "${_reference_archive_location}"
+  cp "${_reference_archive_location}/averageSubjectTracts_exe" "${bids_root}/utils/average_subject_tracts"
+  cp "${_reference_archive_location}/combine_subject_tables.R" "${bids_root}/utils/combine_subject_tables.R"
+  cp "${_reference_archive_location}/singleSubjROI_exe" "${bids_root}/utils/single_subject_roi"
+  cp "${_reference_archive_location}/JHU-WhiteMatter-labels-1mm.nii.gz" "${bids_root}/reference/JHU/JHU_atlas.nii.gz"
+  cp "${_reference_archive_location}/ENIGMA_look_up_table.txt" "${bids_root}/reference/JHU/JHU_roi_look_up_table.txt"
+  rm -rf "${_reference_archive_location}"
+fi
+
+readonly ENIGMA_TOOLS="${bids_root}/utils"
+export ENIGMA_TOOLS
+readonly REFERENCE_ROOT="${bids_root}/reference"
+export REFERENCE_ROOT
 readonly DERIVATIVES="${bids_root}/derivatives/${OUTPUT}"
 export DERIVATIVES
 #create_dir ${DERIVATIVES} ${FALSE}  # Would be nice to have create_dir...
@@ -203,8 +234,8 @@ mkdir -p "${ANALYSIS}"
 # TODO: relocate identify_file() to helpers.sh to import here
 # TODO: make use of identify_file() for the following
 # TODO: modify identify_file() to be compatible with above requirement
-for _file in "$(find "${DERIVATIVES}" -name "*_FA.nii.gz")"; do
-  cp "${_file}" "${ANALYSIS}/$(echo $(basename "${_file}") | sed -r "s/_FA//g")"
+for _file in $(find "${DERIVATIVES}" -name "*_FA.nii.gz"); do
+  cp "${_file}" "${ANALYSIS}/$(echo $(basename ${_file}) | sed -r 's/_FA//g')"
 done
 
 "${SCRIPT_ROOT}"/utils/tbss.sh "${ANALYSIS}"
@@ -227,16 +258,16 @@ for _stats_dir in "${ANALYSIS}/individual/"*"/stats"; do
   mv "${_stats_dir}" "${_fa_dir}"
 done
 
-for _dir in "$(find "${ANALYSIS}/individual" -mindepth 1 -maxdepth 1 -type d)"; do
+for _dir in $(find "${ANALYSIS}/individual" -mindepth 1 -maxdepth 1 -type d); do
   _subject="$(basename "${_dir}")"
   _target="${_subject}_FA.nii.gz"
   mkdir -p "${_dir}/FA/origdata"
   mv "${_dir}/FA/${_target}" "${_dir}/FA/origdata"
 done
 
-for _dir in "$(find "${ANALYSIS}/individual" -mindepth 1 -maxdepth 1 -type d)"; do
+for _dir in $(find "${ANALYSIS}/individual" -mindepth 1 -maxdepth 1 -type d); do
   mkdir "${_dir}/FA/intermediary"
-  for _file in "$(find "${_dir}/FA" -mindepth 1 -maxdepth 1 -type f)"; do
+  for _file in $(find "${_dir}/FA" -mindepth 1 -maxdepth 1 -type f); do
     mv "${_file}" "${_dir}/FA/intermediary"
   done
 done

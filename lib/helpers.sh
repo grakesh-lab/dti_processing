@@ -5,7 +5,7 @@
 # Collection of helper functions
 
 readonly TITLE="UK Center for Addiction Neuromodulation DTI Pipeline"
-readonly VERSION="0.6.0"
+readonly VERSION="1.0.0"
 readonly AUTHORS="Pavan A. Anand"
 readonly COPYRIGHT_YEARS="2022-24"
 

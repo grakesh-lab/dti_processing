@@ -50,12 +50,8 @@ This script was initially created by Pavan Anand, M.D. as a member of the Univer
 
 ## CHANGELOG
 
-### version 0.9.1
+### version 1.0.0
 
-Turns out v0.9.1 actually _also_ contained within it a bug that was not properly caught in the testing environment. This has also now been ironed out.
-
-Which means that _this_ version (as opposed to v0.9.0) now represents a functional, stable, presentable, product for production use and is ready for others to test the whole DTI processing pipeline end-to-end. Huzzah (yet again)! 🎉
-
-Note that this also carries out most of the analysis pipeline as well, but does not yet compile ROI data into a single spreadsheet (i.e., the final suggested step of the ENIGMA DTI protocol data analysis).
+Version now completes all ENIGMA ROI analysis steps in addition to being a functional, stable, presentable, product for production use that is ready for others to test the whole DTI processing pipeline end-to-end.
 
 Any remaining changes between stock ENIGMA files that were changed in any way to complete this project will be outlined in either a wiki in this GitHub repository or in this README file.

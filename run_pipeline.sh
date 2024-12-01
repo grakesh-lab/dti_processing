@@ -285,7 +285,27 @@ find "${ANALYSIS}/individual" -mindepth 1 -maxdepth 1 -type d \
   | parallel -j "${N_PROCS}" "${SCRIPT_ROOT}/utils/diffusivity.sh" "{}"
 
 echo -e "\n\nDEBUG: starting ROI analyses."
+export INPUT
 find "${ANALYSIS}/individual" -type f -path "*/stats/*" -name "*_masked_*_skel.nii.gz" \
   | parallel -j "${N_PROCS}" "${SCRIPT_ROOT}/utils/analyze_roi.sh" "{}"
+
+for _measure in "MD" "AD" "RD"; do
+  find "${ANALYSIS}" -path "*/${_measure}/stats*" -name "*_roi_avg.csv" | sort > "${ANALYSIS}/_data.txt"
+  find "${ANALYSIS}" -path "*/${_measure}/stats*" -name "*_roi_avg.csv" | sort | xargs -I {} basename {} | cut -d "_" -f 1-2 > "${ANALYSIS}/_session.txt"
+  paste -d "," "${ANALYSIS}/_session.txt" "${ANALYSIS}/_data.txt" > "${ANALYSIS}/subject_list-${_measure}.csv"
+done
+rm "${ANALYSIS}/_data.txt" "${ANALYSIS}/_session.txt"
+
+for _measure in "MD" "AD" "RD"; do
+  table="${INPUT}/metadata.tsv"
+  subject_id_col="id"
+  subject_list="${ANALYSIS}/subject_list-${_measure}.csv"
+  output_filename="roi_summary-${_measure}.csv"
+  n_covariates=2
+  covariates="age;sex"
+  n_rois="all"
+  rois="all"
+  R --no-save --slave --args ${table} ${subject_id_col} ${subject_list} ${output_filename} ${n_covariates} ${covariates} ${n_rois} ${rois} < "${bids_root}/utils/combine_subject_tables.R"
+done
 
 exit 0
